@@ -2,6 +2,8 @@ package com.technolab.studentsvc.controllers;
 
 import com.technolab.studentsvc.exceptions.StudentNotFoundException;
 import com.technolab.studentsvc.models.Student;
+import com.technolab.studentsvc.services.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,7 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("student/etudiant")
 public class StudentController {
-    List<Student> students=new ArrayList<Student>();
+    //List<Student> students=new ArrayList<Student>();
+    @Autowired
+    private StudentService studentService;
     @GetMapping
     public List<Student> readStudents(){
 
@@ -22,14 +26,15 @@ public class StudentController {
                 .id(2)
                 .nom("COULIBALY")
                 .prenom("Fatoumata").build());*/
-        return  students;
+        return  studentService.finAll();
     }
     @PostMapping
     public Student createStudents(@RequestBody Student s){
         /*Student s=new Student();
         s.setId(1);
         s.setNom("Ali");*/
-        students.add(s);
+        //students.add(s);
+        studentService.create(s);
         return s;
     }
     @PutMapping("/{id}")
@@ -37,25 +42,26 @@ public class StudentController {
         /*Student s=new Student();
         s.setId(1);
         s.setNom("Ali");*/
-        for(Student s:students){
+        /*for(Student s:students){
             if(s.getId()==id){
                 s.setNom(us.getNom());
                 s.setPrenom(us.getPrenom());
             }
-        }
+        }*/
     }
 
     @DeleteMapping("/{id}")
     public String  deleteStudents(@PathVariable long id){
-        students.removeIf((s)-> s.getId()==id);
+        //students.removeIf((s)-> s.getId()==id);
         return "Student "+id+" is deleted successfuly !!!";
     }
 
     @GetMapping("/{id}")
     public Student getStudents(@PathVariable long id){
-        return  students.stream().
+        return null;
+        /*return  students.stream().
                 filter((s)->s.getId()==id).findFirst()
-                .orElseThrow(()->new StudentNotFoundException(id));
+                .orElseThrow(()->new StudentNotFoundException(id));*/
     }
 
 }
