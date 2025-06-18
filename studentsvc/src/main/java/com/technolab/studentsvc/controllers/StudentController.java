@@ -1,5 +1,6 @@
 package com.technolab.studentsvc.controllers;
 
+import com.technolab.studentsvc.exceptions.StudentNotFoundException;
 import com.technolab.studentsvc.models.Student;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,13 @@ public class StudentController {
     public String  deleteStudents(@PathVariable long id){
         students.removeIf((s)-> s.getId()==id);
         return "Student "+id+" is deleted successfuly !!!";
+    }
+
+    @GetMapping("/{id}")
+    public Student getStudents(@PathVariable long id){
+        return  students.stream().
+                filter((s)->s.getId()==id).findFirst()
+                .orElseThrow(()->new StudentNotFoundException(id));
     }
 
 }
