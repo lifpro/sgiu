@@ -1,14 +1,53 @@
 package com.technolab.studentsvc.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.technolab.studentsvc.models.Student;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("student/etudiant")
 public class StudentController {
-    @GetMapping("hello")
-    public String SeyHello(){
-        return  "Je suis un controlleur qui expose des ressource sur le etudiatnts";
+    List<Student> students=new ArrayList<Student>();
+    @GetMapping
+    public List<Student> readStudents(){
+
+        /*students.add(Student.builder()
+                .id(1)
+                .nom("TRAORE")
+                .prenom("Moussa").build());
+        students.add(Student.builder()
+                .id(2)
+                .nom("COULIBALY")
+                .prenom("Fatoumata").build());*/
+        return  students;
     }
+    @PostMapping
+    public Student createStudents(@RequestBody Student s){
+        /*Student s=new Student();
+        s.setId(1);
+        s.setNom("Ali");*/
+        students.add(s);
+        return s;
+    }
+    @PutMapping("/{id}")
+    public void updateStudents(@PathVariable long id,@RequestBody Student us){
+        /*Student s=new Student();
+        s.setId(1);
+        s.setNom("Ali");*/
+        for(Student s:students){
+            if(s.getId()==id){
+                s.setNom(us.getNom());
+                s.setPrenom(us.getPrenom());
+            }
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public String  deleteStudents(@PathVariable long id){
+        students.removeIf((s)-> s.getId()==id);
+        return "Student "+id+" is deleted successfuly !!!";
+    }
+
 }
