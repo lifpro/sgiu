@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("student/etudiant")
+@RequestMapping("/student/etudiant")
 public class StudentController {
     //List<Student> students=new ArrayList<Student>();
     @Autowired
