@@ -92,6 +92,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>registrationsvc</finalName>
 	</build>
 
 </project>

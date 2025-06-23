@@ -20,53 +20,53 @@ services:
       timeout: 5s
       retries: 3
 
-#  prometheus:
-#    image: prom/prometheus
-#    container_name: prometheus
-#    restart: unless-stopped
-#    ports:
-#      - "8762:9090"
-#    volumes:
-#      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#    networks:
-#      - sgiu-network
-#
-#  tempo:
-#    image: grafana/tempo
-#    container_name: tempo
-#    command: [ "-config.file=/etc/tempo.yaml" ]
-#    volumes:
-#      - ./observability/tempo/tempo.yml:/etc/tempo.yaml:ro
-#      - ./observability/tempo/tempo-data:/tmp/tempo
-#    ports:
-#      - "3200:3200" # Tempo
-#      - "9411:9411" # zipkin
-#    networks:
-#      - sgiu-network
-#
-#  loki:
-#    image: grafana/loki:main
-#    container_name: loki
-#    command: [ "-config.file=/etc/loki/local-config.yaml" ]
-#    ports:
-#      - "3100:3100"
-#    networks:
-#      - sgiu-network
-#
-#  grafana:
-#    image: grafana/grafana
-#    container_name: grafana
-#    restart: unless-stopped
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./observability/grafana:/etc/grafana/provisioning/datasources:ro
-#    environment:
-#      - GF_SECURITY_ADMIN_USER=admin
-#      - GF_SECURITY_ADMIN_PASSWORD=admin
-#    networks:
-#      - sgiu-network
-#
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "8762:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - sgiu-network
+
+  tempo:
+    image: grafana/tempo
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./observability/tempo/tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200" # Tempo
+      - "9411:9411" # zipkin
+    networks:
+      - sgiu-network
+
+  loki:
+    image: grafana/loki:main
+    container_name: loki
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+    networks:
+      - sgiu-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./observability/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - sgiu-network
+
   eureka-server:
     #image: lifpro/eureka-server:latest
     build:
@@ -109,6 +109,45 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/sgiu_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=dev
       - SPRING_DATASOURCE_PASSWORD=dev
+    restart: on-failure
+    networks:
+      - sgiu-network
+  academicsvc:
+    #image: lifpro/academicsvc:latest
+    build:
+      context: ./academicsvc/
+      dockerfile: Dockerfile
+    container_name: academicsvc
+    ports:
+      - "9093:9093"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/sgiu_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev
+    restart: on-failure
+    networks:
+      - sgiu-network
+  registrationsvc:
+    #image: lifpro/registrationsvc:latest
+    build:
+      context: ./registrationsvc/
+      dockerfile: Dockerfile
+    container_name: registrationsvc
+    ports:
+      - "9095:9095"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/sgiu_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev
+    restart: on-failure
     networks:
       - sgiu-network
 
