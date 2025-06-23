@@ -1,5 +1,6 @@
 package com.technolab.registrationsvc.dto;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +11,10 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentDTO {
+public class FormationDTO {
     private long id;
     private String  nom;
-    private String  prenom;
-    private String  email;
-    private Date dateNaiss;
+    private String niveau;
+    private double tarif;
+    private long  domaineID;
 }

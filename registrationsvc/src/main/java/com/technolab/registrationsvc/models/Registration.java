@@ -26,5 +26,7 @@ public class Registration {
     private long  studentID;
     @Column()
     private long  formationID;
+    @Column()
+    private double frais;
 
 }

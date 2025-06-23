@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/etudiant")
+@RequestMapping("/student/etudiant")
 public class StudentController {
     //List<Student> students=new ArrayList<Student>();
     @Autowired
@@ -58,7 +58,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public Student getStudents(@PathVariable long id){
-        return null;
+        return studentService.findById(id);
         /*return  students.stream().
                 filter((s)->s.getId()==id).findFirst()
                 .orElseThrow(()->new StudentNotFoundException(id));*/

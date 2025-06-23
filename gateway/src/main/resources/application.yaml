@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
 
 spring:
   application:
@@ -7,26 +7,18 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
+        - id: studentsvc
+          uri: lb://STUDENTSVC
           predicates:
-            - Path=/api/auth/**
-        - id: utilisateur-service
-          uri: lb://UTILISATEUR-SERVICE
+            - Path=/student/**
+        - id: academicsvc
+          uri: lb://ACADEMICSVC
           predicates:
-            - Path=/api/utilisateurs/**
-        - id: client-service
-          uri: lb://CLIENT-SERVICE
+            - Path=/academic/**
+        - id: registrationsvc
+          uri: lb://REGISTRATIONSVC
           predicates:
-            - Path=/api/clients/**
-        - id: produit-service
-          uri: lb://PRODUIT-SERVICE
-          predicates:
-            - Path=/api/produits/**
-        - id: commande-service
-          uri: lb://COMMANDE-SERVICE
-          predicates:
-            - Path=/api/commandes/**
+            - Path=/registration/**
 eureka:
   client:
     service-url:

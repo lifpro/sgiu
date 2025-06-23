@@ -1,5 +1,9 @@
 package com.technolab.registrationsvc.services;
 
+import com.technolab.registrationsvc.clients.FormationClient;
+import com.technolab.registrationsvc.clients.StudentClient;
+import com.technolab.registrationsvc.dto.FormationDTO;
+import com.technolab.registrationsvc.dto.StudentDTO;
 import com.technolab.registrationsvc.models.Registration;
 import com.technolab.registrationsvc.repositories.RegistrationRepository;
 import jakarta.persistence.EntityManager;
@@ -14,6 +18,10 @@ public class RegistrationService {
     private final EntityManager em;
     @Autowired
     private RegistrationRepository registrationRepository;
+    @Autowired
+    private StudentClient studentClient;
+    @Autowired
+    private FormationClient formationClient;
 
     public RegistrationService(EntityManager em) {
         this.em = em;
@@ -21,6 +29,10 @@ public class RegistrationService {
 
     public Registration create(Registration o){
         try {
+            System.out.println("create");
+            StudentDTO s=studentClient.findStudentById(o.getStudentID());
+            FormationDTO f=formationClient.findFormationById(o.getFormationID());
+            o.setFrais(f.getTarif());
             return registrationRepository.saveAndFlush(o);
         } catch (Exception e) {
             return null;
@@ -61,6 +73,8 @@ public class RegistrationService {
         }
     }
     public List<Registration> finAll(){
+        //FormationDTO f=formationClient.findFormationById(1);
+        //System.out.println(f.getNom());
         return registrationRepository.findAll();
     }
 

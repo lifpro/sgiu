@@ -27,6 +27,9 @@ public class Formation {
     private NiveauFormation niveau;
     @Column()
     private int duree;
+    @Column()
+    private double tarif;
+    @Column()
     private long  domaineID;
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
