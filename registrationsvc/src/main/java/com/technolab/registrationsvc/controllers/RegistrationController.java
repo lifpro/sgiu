@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("academic/registration")
+@RequestMapping("registration/inscription")
 public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
