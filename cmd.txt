@@ -1,0 +1,10 @@
+
+#docker
+docker build -t eureka-server:latest eureka-server/
+docker build -t api-gateway:latest gateway/
+
+
+#docker-compose
+sudo docker-compose up -d
+sudo docker-compose down
+

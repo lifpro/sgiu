@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sgiu_db
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: dev
+    ports:
+      - "3307:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - sgiu-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+#  prometheus:
+#    image: prom/prometheus
+#    container_name: prometheus
+#    restart: unless-stopped
+#    ports:
+#      - "8762:9090"
+#    volumes:
+#      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#    networks:
+#      - sgiu-network
+#
+#  tempo:
+#    image: grafana/tempo
+#    container_name: tempo
+#    command: [ "-config.file=/etc/tempo.yaml" ]
+#    volumes:
+#      - ./observability/tempo/tempo.yml:/etc/tempo.yaml:ro
+#      - ./observability/tempo/tempo-data:/tmp/tempo
+#    ports:
+#      - "3200:3200" # Tempo
+#      - "9411:9411" # zipkin
+#    networks:
+#      - sgiu-network
+#
+#  loki:
+#    image: grafana/loki:main
+#    container_name: loki
+#    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+#    ports:
+#      - "3100:3100"
+#    networks:
+#      - sgiu-network
+#
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana
+#    restart: unless-stopped
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./observability/grafana:/etc/grafana/provisioning/datasources:ro
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=admin
+#      - GF_SECURITY_ADMIN_PASSWORD=admin
+#    networks:
+#      - sgiu-network
+#
+  eureka-server:
+    #image: lifpro/eureka-server:latest
+    build:
+      context: ./eureka-server/
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - sgiu-network
+
+  api-gateway:
+    #image: lifpro/api-gateway:latest
+    build:
+      context: ./gateway/
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    networks:
+      - sgiu-network
+
+  studentsvc:
+    #image: lifpro/studentsvc:latest
+    build:
+      context: ./studentsvc/
+      dockerfile: Dockerfile
+    container_name: studentsvc
+    ports:
+      - "9092:9092"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/sgiu_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev
+    networks:
+      - sgiu-network
+
+networks:
+  sgiu-network:
+    driver: bridge
