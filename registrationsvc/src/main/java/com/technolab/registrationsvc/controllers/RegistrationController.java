@@ -17,8 +17,6 @@ public class RegistrationController {
 
     @PostMapping
     public Registration create(@RequestBody Registration o){
-        System.out.println("create Registration");
-
         return registrationService.create(o);
     }
     @PutMapping("/{id}")
